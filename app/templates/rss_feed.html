@@ -1,0 +1,33 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <div class="container mt-5">
+    <h2 class="fw-bold">{{ name }}</h2>
+    <h5 class="mb-5">{{ description }}</h5>
+
+    {% for item in items %}
+
+      {% if item_tags['link'] == 'link' %}
+        {% set _link = item['link'].string %}
+      {% elif item_tags['link'] == 'link["href"]' %}
+        {% set _link = item['link']['href'] %}
+      {% endif %}
+
+      <div>
+        <div class="card w-75 mb-3">
+          <a class="card-body text-decoration-none" href="{{ _link }}">
+            <h5 class="card-title">{{ item[item_tags['title']].string }}</h5>
+            <small class="time">{{ item[item_tags['published']].string }}</small>
+            <div class="card-text mt-3">
+              {% if item_tags['description'] %}
+                {{ item[item_tags['description']].string | safe }}
+              {% endif %}
+              <span class="text-primary">... Read more</span>
+            </div>
+          </a>
+        </div>
+      </div>
+    {% endfor %}
+
+  </div>
+{% endblock %}

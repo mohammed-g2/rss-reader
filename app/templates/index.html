@@ -1,0 +1,12 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+  <div class="container">
+    <h3 class="mt-3">News feed</h3>
+    <ul>
+      <li><a href="{{ url_for('feed', rss_feed='entrepreneur') }}">Entrepreneur</a></li>
+      <li><a href="{{ url_for('feed', rss_feed='hbr') }}">Harvard Business Review</a></li>
+      <li><a href="{{ url_for('feed', rss_feed='yahoo') }}">Yahoo Finance</a></li>
+    </ul>
+  </div>
+{% endblock %}
