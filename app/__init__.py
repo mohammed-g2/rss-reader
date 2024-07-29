@@ -16,7 +16,7 @@ def create_app(config_name: str) -> Flask:
 
     @app.route('/<rss_feed>')
     def feed(rss_feed):
-        accepted_rss_feeds = ['entrepreneur', 'hbr', 'yahoo']
+        accepted_rss_feeds = ['entrepreneur', 'hbr', 'yahoo', 'tech-church', 'venture-beat']
         if rss_feed not in accepted_rss_feeds:
             return redirect(url_for('index'))
         
@@ -24,13 +24,12 @@ def create_app(config_name: str) -> Flask:
             map = {
                 'name': 'Entrepreneur',
                 'url': 'https://www.entrepreneur.com/latest.rss',
-                'template': 'en.html',
                 'title': 'title',
                 'description': 'description',
                 'items': {
                     '_id': 'item',
                     'title': 'title',
-                    'link': {'name': 'link', 'attr': False},
+                    'link': {'attr': False},
                     'published': 'pubDate',
                     'description': 'description'
                 }
@@ -39,13 +38,12 @@ def create_app(config_name: str) -> Flask:
             map = {
                 'name': 'Harvard Business Review',
                 'url': 'http://feeds.hbr.org/harvardbusiness/',
-                'template': 'hbr.html',
                 'title': 'title',
                 'description': 'subtitle',
                 'items': {
                     '_id': 'entry',
                     'title': 'title',
-                    'link': {'name': 'link', 'attr': 'href'},
+                    'link': {'attr': 'href'},
                     'published': 'published',
                     'description': 'summary'
                 }
@@ -54,15 +52,42 @@ def create_app(config_name: str) -> Flask:
             map = {
                 'name': 'Yahoo Finance',
                 'url': 'https://finance.yahoo.com/rss/',
-                'template': 'yahoo.html',
                 'title': 'title',
                 'description': 'description',
                 'items': {
                     '_id': 'item',
                     'title': 'title',
-                    'link': {'name': 'link', 'attr': False},
+                    'link': {'attr': False},
                     'published': 'pubDate',
                     'description': None
+                }
+            }
+        elif rss_feed == 'tech-church':
+            map = {
+                'name': 'TechChurch',
+                'url': 'https://feeds.feedburner.com/TechCrunch/',
+                'title': 'title',
+                'description': 'description',
+                'items': {
+                    '_id': 'item',
+                    'title': 'title',
+                    'link': {'attr': False},
+                    'published': 'pubDate',
+                    'description': None
+                }
+            }
+        elif rss_feed == 'venture-beat':
+            map = {
+                'name': 'VentureBeat',
+                'url': 'http://feeds.feedburner.com/venturebeat/SZYF',
+                'title': 'title',
+                'description': 'description',
+                'items': {
+                    '_id': 'item',
+                    'title': 'title',
+                    'link': {'attr': False},
+                    'published': 'pubDate',
+                    'description': 'description'
                 }
             }
         
@@ -80,9 +105,9 @@ def create_app(config_name: str) -> Flask:
                     desc = None
                 
                 if map['link']['attr'] is not False:
-                    link = getattr(item, map['link']['name'])[map['link']['attr']]
+                    link = getattr(item, 'link')[map['link']['attr']]
                 else:
-                    link = getattr(item, map['link']['name']).string
+                    link = getattr(item, 'link').string
                 
                 _items.append({
                     '_id': map['_id'],
