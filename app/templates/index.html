@@ -1,14 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-  <div class="container">
-    <h3 class="mt-3">News feed</h3>
+  <div class="container mt-5">
+    <h3 class="mt-3">News feeds</h3>
     <ul>
-      <li><a href="{{ url_for('feed', rss_feed='entrepreneur') }}">Entrepreneur</a></li>
-      <li><a href="{{ url_for('feed', rss_feed='hbr') }}">Harvard Business Review</a></li>
-      <li><a href="{{ url_for('feed', rss_feed='yahoo') }}">Yahoo Finance</a></li>
-      <li><a href="{{ url_for('feed', rss_feed='tech-church') }}">TechChurch</a></li>
-      <li><a href="{{ url_for('feed', rss_feed='venture-beat') }}">VentureBeat</a></li>
+      {% for feed in feeds %}
+        <li><a href="{{ url_for('main.feed', id=feed.id) }}">{{ feed.name }}</a></li>
+      {% endfor %}
     </ul>
   </div>
 {% endblock %}

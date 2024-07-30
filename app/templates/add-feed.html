@@ -1,0 +1,67 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-lg-6 col-md-8 col-12">
+      <form method="post" class="mb-5">
+        {{ form.csrf_token }}
+
+        <div class="mb-3">
+          {{ form.url.label(class="form-label", for="url") }}
+          {{ form.url(class="form-control form-control-sm", id="url") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.name.label(class="form-label", for="name") }}
+          {{ form.name(class="form-control form-control-sm", id="name") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.title_tag.label(class="form-label", for="title_tag") }}
+          {{ form.title_tag(class="form-control form-control-sm", id="title_tag") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.desc_tag.label(class="form-label", for="desc_tag") }}
+          {{ form.desc_tag(class="form-control form-control-sm", id="desc_tag") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.item_tag.label(class="form-label", for="item_tag") }}
+          {{ form.item_tag(class="form-control form-control-sm", id="item_tag") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.item_title_tag.label(class="form-label", for="item_title_tag") }}
+          {{ form.item_title_tag(class="form-control form-control-sm", id="item_title_tag") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.item_link_tag.label(class="form-label", for="item_link_tag") }}
+          {{ form.item_link_tag(class="form-control form-control-sm", id="item_link_tag") }}
+        </div>
+
+        <div class="mb-3 form-check">
+          {{ form.item_link_use_href(class="form-check-input", id="item_link_use_href") }}
+          {{ form.item_link_use_href.label(class="form-check-label", for="item_link_use_href") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.item_published_tag.label(class="form-label", for="item_published_tag") }}
+          {{ form.item_published_tag(class="form-control form-control-sm", id="item_published_tag") }}
+        </div>
+
+        <div class="mb-3">
+          {{ form.item_desc_tag.label(class="form-label", for="item_desc_tag") }}
+          {{ form.item_desc_tag(class="form-control form-control-sm", id="item_desc_tag") }}
+        </div>
+
+        <div class="mb-3 text-center">
+          {{ form.submit(class="btn btn-dark") }}
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -14,7 +14,15 @@
 </head>
 
 <body>
-  {% include 'fragments/_navbar.html' %}
+
+  <ul class="nav border-bottom border-dark">
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('main.index') }}">Rss Feeds</a>
+    </li>
+    <li class="nav-item">
+      <a class="nav-link" href="{{ url_for('main.add_feed') }}">New Rss Feed</a>
+    </li>
+  </ul>
 
   <main>
     {% block content %}{% endblock %}
