@@ -5,7 +5,19 @@
     <h3 class="mt-3">News feeds</h3>
     <ul>
       {% for feed in feeds %}
-        <li><a href="{{ url_for('main.feed', id=feed.id) }}">{{ feed.name }}</a></li>
+        <li>
+          <a href="{{ url_for('main.feed', id=feed.id) }}">{{ feed.name }}</a>
+          &#x2022;
+          <a href="{{ url_for('main.edit_feed', id=feed.id) }}">Edit</a>
+          &#x2022;
+          <form method="post" action="{{ url_for('main.delete_feed') }}" class="d-inline">
+            {{ delete_feed_form.csrf_token }}
+            {{ delete_feed_form.id(value=feed.id) }}
+            {{ delete_feed_form.submit(
+              class="text-primary bg-transparent border-0", 
+              style="text-decoration:underline; cursor:pointer;") }}
+          </form>
+        </li>
       {% endfor %}
     </ul>
   </div>

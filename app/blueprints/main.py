@@ -1,72 +1,92 @@
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
-from flask import Blueprint, render_template, redirect, url_for, flash
+from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app import db
-from app.models import Feed
-from .forms import NewFeedForm
+from app.models import FeedMap, Feed
+from app.util import scrap
+from .forms import NewFeedForm, DeleteFeedForm
 
 main_bp = Blueprint('main', __name__)
 
 
 @main_bp.route('/')
 def index():
-    feeds = Feed.query.all()
-    return render_template('index.html', feeds=feeds) 
+    feeds = FeedMap.query.all()
+    delete_feed_form = DeleteFeedForm()
+    return render_template('index.html', feeds=feeds, delete_feed_form=delete_feed_form) 
+
+
+@main_bp.route('/feed/<int:id>')
+def feed(id):
+    feed = Feed.query.get_or_404(id)
+    return render_template('rss-feed.html', feed=feed)
 
 
 @main_bp.route('/add-feed', methods=['GET', 'POST'])
 def add_feed():
     form = NewFeedForm()
     if form.validate_on_submit():
-        feed = Feed()
-        feed.name = form.name.data
-        feed.url = form.url.data
-        feed.title_tag = form.title_tag.data
-        feed.desc_tag = form.desc_tag.data
-        feed.item_tag = form.item_tag.data
-        feed.item_title_tag = form.item_title_tag.data
-        feed.item_link_tag = form.item_link_tag.data
-        feed.item_link_use_href = form.item_link_use_href.data
-        feed.item_published_tag = form.item_published_tag.data
-        feed.item_desc_tag = form.item_desc_tag.data
+        feed_map = FeedMap()
+        feed_map.name = form.name.data
+        feed_map.url = form.url.data
+        feed_map.title_tag = form.title_tag.data
+        feed_map.desc_tag = form.desc_tag.data
+        feed_map.item_tag = form.item_tag.data
+        feed_map.item_title_tag = form.item_title_tag.data
+        feed_map.item_link_tag = form.item_link_tag.data
+        feed_map.item_link_use_href = form.item_link_use_href.data
+        feed_map.item_published_tag = form.item_published_tag.data
+        feed_map.item_desc_tag = form.item_desc_tag.data
         
-        db.session.add(feed)
+        db.session.add(feed_map)
         db.session.commit()
+        
+        scrap(feed_map)
         flash('new feed added')
         return redirect(url_for('main.index'))
-    
+
     return render_template('add-feed.html', form=form)
 
 
-@main_bp.route('/feed/<int:id>')
-def feed(id):
-    feed = Feed.query.get_or_404(id)
-    page = urlopen(feed.url)
-    xml = page.read().decode('utf-8')
-    soup = BeautifulSoup(markup=xml, features='xml')
-    items = soup.find_all(feed.item_tag)
-    _items = []
-
-    for item in items:
-        if feed.item_desc_tag:
-            desc = getattr(item, feed.item_desc_tag).string
-        else:
-            desc = None
+@main_bp.route('/edit-feed/<int:id>', methods=['GET', 'POST'])
+def edit_feed(id):
+    feed_map = FeedMap.query.get_or_404(id)
+    form = NewFeedForm()
+    if form.validate_on_submit():
+        feed_map.name = form.name.data
+        feed_map.url = form.url.data
+        feed_map.title_tag = form.title_tag.data
+        feed_map.desc_tag = form.desc_tag.data
+        feed_map.item_tag = form.item_tag.data
+        feed_map.item_title_tag = form.item_title_tag.data
+        feed_map.item_link_tag = form.item_link_tag.data
+        feed_map.item_link_use_href = form.item_link_use_href.data
+        feed_map.item_published_tag = form.item_published_tag.data
+        feed_map.item_desc_tag = form.item_desc_tag.data
         
-        if feed.item_link_use_href:
-            link = getattr(item, feed.item_link_tag)['href']
-        else:
-            link = getattr(item, feed.item_link_tag).string
-        
-        _items.append({
-            'id': feed.id,
-            'title': getattr(item, feed.item_title_tag).string,
-            'published': getattr(item, feed.item_published_tag).string,
-            'description': desc,
-            'link': link})
+        db.session.add(feed_map)
+        db.session.commit()
+        flash('feed updated')
+        return redirect(url_for('main.index'))
     
-    return render_template(
-        'rss-feed.html',
-        name=getattr(soup, feed.title_tag).string,
-        description=getattr(soup, feed.desc_tag).string,
-        items=_items)
+    form.name.data = feed_map.name
+    form.url.data = feed_map.url
+    form.title_tag.data = feed_map.title_tag
+    form.desc_tag.data = feed_map.desc_tag
+    form.item_tag.data = feed_map.item_tag
+    form.item_title_tag.data = feed_map.item_title_tag
+    form.item_link_tag.data = feed_map.item_link_tag
+    form.item_link_use_href.data = feed_map.item_link_use_href
+    form.item_published_tag.data = feed_map.item_published_tag
+    form.item_desc_tag.data = feed_map.item_desc_tag
+
+    return render_template('add-feed.html', form=form)
+
+
+@main_bp.route('/delete-feed', methods=['POST'])
+def delete_feed():
+    form = DeleteFeedForm(request.form)
+    feed_map = FeedMap.query.get_or_404(form.id.data)
+    if form.validate_on_submit():
+        db.session.delete(feed_map)
+        db.session.commit()
+        flash('feed deleted')
+    return redirect(url_for('main.index'))

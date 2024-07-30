@@ -7,7 +7,8 @@
 - run the application: `flask run`
 
 ### How to use
-- find your favorite website that offers rss file "xml format"
+- find a website that offers rss file "xml format"
 - go to add new feed page
 - fill the form with the tag names from the xml file
 - the rss feed will be available in home page
+- the app will run a scraping job once every 24 hours for all rss feeds stored

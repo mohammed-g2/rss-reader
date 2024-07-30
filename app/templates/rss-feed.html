@@ -2,18 +2,18 @@
 
 {% block content %}
   <div class="container mt-5">
-    <h2 class="fw-bold">{{ name }}</h2>
-    <h5 class="mb-5">{{ description }}</h5>
+    <h2 class="fw-bold">{{ feed.name }}</h2>
+    <h5 class="mb-5">{{ feed.desc }}</h5>
 
-    {% for item in items %}
+    {% for item in feed.items.all() %}
       <div>
         <div class="card w-75 mb-3">
-          <a class="card-body text-decoration-none" href="{{ item['link'] }}">
-            <h5 class="card-title">{{ item['title'] }}</h5>
-            <small class="time">{{ item['published'] }}</small>
+          <a class="card-body text-decoration-none" href="{{ item.link }}">
+            <h5 class="card-title">{{ item.title }}</h5>
+            <small class="time">{{ item.published }}</small>
             <div class="card-text mt-3">
-              {% if item['description'] %}
-                {{ item['description'] | safe }}
+              {% if item.desc %}
+                {{ item.desc | safe }}
               {% endif %}
               <span class="text-primary">... Read more</span>
             </div>

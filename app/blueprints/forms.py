@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, BooleanField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, BooleanField, HiddenField
+from wtforms.validators import DataRequired, ValidationError
+from app.models import FeedMap
 
 
 class NewFeedForm(FlaskForm):
@@ -15,3 +16,16 @@ class NewFeedForm(FlaskForm):
     item_published_tag = StringField('Item Published Date Tag')
     item_desc_tag = StringField('Item Description Tag')
     submit = SubmitField('Add Feed')
+
+    def validate_name(self, field):
+        if FeedMap.query.filter_by(name=field.data).first():
+            raise ValidationError('Feed already registered')
+
+    def validate_url(self, field):
+        if FeedMap.query.filter_by(url=field.data).first():
+            raise ValidationError('URL already registered')
+
+
+class DeleteFeedForm(FlaskForm):
+    id = HiddenField('id', validators=[DataRequired()])
+    submit = SubmitField('Delete')
